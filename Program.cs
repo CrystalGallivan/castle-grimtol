@@ -1,5 +1,6 @@
 ﻿using System;
 using CastleGrimtol.Project;
+using CastleGrimtol.Project.Models;
 
 namespace CastleGrimtol
 {
@@ -21,7 +22,15 @@ namespace CastleGrimtol
 |::.|:. |::.|         |::.|              |::.. . |                                    |::..   |                       
 `--- ---`---'         `---'              `-------'                                    `----|:.|                       
                                                                                            `--'                       
- ____________________________________________________________________________________________________________________                                                                                           ");
+ ____________________________________________________________________________________________________________________
+ ");
+
+
+      Console.WriteLine("What is your Name?");
+      var name = Console.ReadLine();
+
+      // GameService gs = new GameService(Room, currentPlayer);
+      // gs.StartGame();
     }
   }
 }
