@@ -29,10 +29,11 @@ namespace CastleGrimtol.Project.Models
     }
     public void PrintOption()
     {
-      Console.WriteLine(@"To Move: Type 'go forward', 'go back', 'go left', or 'go right' to move.
+      Console.WriteLine(@"Options:
+      To Move: Type 'go forward', 'go back', 'go left', or 'go right' to move.
       To see Inventory: Type 'inventory'
-      To Take Item: Type 'take'
-      To Use Item: Type 'use'
+      To Take Item: Type 'take' + item name
+      To Use Item: Type 'use' + item name
       For Help: Type 'help'
       To see the room: Type 'look'
       To Restart: Type 'restart' 

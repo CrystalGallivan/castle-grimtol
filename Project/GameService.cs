@@ -15,25 +15,16 @@ namespace CastleGrimtol.Project
     public void Play()
     {
       Console.WriteLine("What is your Name?");
-      // CurrentPlayer.PlayerName = Console.ReadLine();
       string playerName = Console.ReadLine();
       Player CurrentPlayer = new Player(playerName);
-      // CurrentPlayer.PlayerName = playerName;
-      // Console.WriteLine("This is Supposed to be your name");
-      Console.WriteLine("Welcome {CurrentPlayer.PlayerName}!");
       Console.Clear();
+      Console.WriteLine($"Welcome {CurrentPlayer.PlayerName}!");
       Console.WriteLine(@"Welcome you are on a mission to retrieve the Sorcer's Stone. Harry Potter is no where to be found. Professor Quirrell must be stopped. You must make you're way through a series of challanges that will push your limits. Navigate your way through the rooms by typing 'go forward', 'go right', 'go left', 'go back'. To open your inventory type 'inventory'. To pick up an item type 'take'. To use an item type 'use'. To look around type 'look'. For help type 'help'. If you're a quitter you can also type 'quit. ");
       Console.WriteLine($@"{CurrentRoom.Name} -
      {CurrentRoom.Description}");
       while (Playing)
       {
-        // Console.Clear();
-        // CurrentPlayer.PlayerName = playerName;
         GetUserInput();
-        // Console.WriteLine("What would you like to do?");
-        // CurrentRoom.PrintOption();
-        // string input = Console.ReadLine().ToLower();
-
       }
     }
     public void GetUserInput()
@@ -50,6 +41,9 @@ namespace CastleGrimtol.Project
       }
       switch (command)
       {
+        case "lose":
+          Lose(option);
+          break;
         case "go":
           Go(option);
           break;
@@ -80,24 +74,8 @@ namespace CastleGrimtol.Project
     public void Go(string option)
     {
       //TODO  I need to reset currentroom every time the room changes
-      if (CurrentRoom.Exits.ContainsKey(option))
-      {
-        Console.WriteLine("I made it Here!");
-        CurrentRoom.Navigate(option);
-        // foreach (var room in CurrentRoom.Exits)
-        // {
+      CurrentRoom = (Room)CurrentRoom.Navigate(option);
 
-        // CurrentRoom =  room[option];
-
-        // }
-        // CurrentRoom = CurrentRoom.Exits.GetType(option);
-        // Find(i => i.Name == option);
-      }
-      else
-      {
-        Console.WriteLine("Wrong Way");
-
-      }
       Console.WriteLine("Type 'go forward', 'go back', 'go right', 'go left' to move.");
 
     }
@@ -185,15 +163,17 @@ namespace CastleGrimtol.Project
       Item harp = new Item("Harp", "You pick up the harp and start playing. The dog stop snarling, it's big eyes start to droop. Finally the dogs heads drop. His paw is just far enough off of the trap door take open it and slip through.");
       Item wand = new Item("Wand", "You find a, 11\" holly, phoenix feather, nice and supple, wand hidden in your robes. You shout incendio. The devil's snare quickly recedes. You can feel your self falling again.");
       Item broom = new Item("Broom", "What it may lack in speed and flashiness, it makes up with sturdiness and dependability. A good broom that will take care of most of your needs. You grab a hold of it and whisks you up ward towards the keys floating above.");
-      Item falseKey = new Item("Key", "A glittering winged key. You grab the key as it try's to dart away.");
-      Item key = new Item("Key", "A glittering winged key with a crumpled wing. You easily snatch the key. Maybe this key will open the door.");
+      Item falseKey = new Item("Key", "A glittering winged key. You grab the key as it try's to dart away. This key does not fit the key hole on the door");
+      Item key = new Item("Key", "A glittering winged key with a crumpled wing. You easily snatch the key. You take it to the door and try it. It's a perfect match.");
       Item stone = new Item("The Sorcer's Stone", "A legendary substance with astonishing powers. The Stone will transform any metal into pure gold. It also produces the Elixir of Life, which will make the drinker immortal. You have saved the word from Professor Quirrell and he who must not be named. You have won this round!");
 
+      //Add Items to Room
       tfcorridor.Items.Add(harp);
       keyChamber.Items.Add(broom);
       keyChamber.Items.Add(falseKey);
       keyChamber.Items.Add(key);
       meChamber.Items.Add(stone);
+
 
 
       // CurrentPlayer.Inventory.Add(wand);
@@ -224,15 +204,18 @@ namespace CastleGrimtol.Project
       //TODO Figure out why this isn't working
       Console.Clear();
       Item item = CurrentRoom.Items.Find(i => i.Name == option);
-      Console.WriteLine($"{item.Name} --- {item.Description}");
-      if (item == null)
+      if (item != null)
+      {
+        Console.WriteLine($"{item.Name} --- {item.Description}");
+        CurrentRoom.Items.Remove(item);
+        CurrentPlayer.Inventory.Add(item);
+        Console.WriteLine($"Sucessfully added");
+      }
+      else
       {
         Console.WriteLine("That is not an item!");
+
       }
-      // // item.Used = false;
-      CurrentRoom.Items.Remove(item);
-      CurrentPlayer.Inventory.Add(item);
-      Console.WriteLine($"Sucessfully added {item}");
 
     }
 
@@ -242,15 +225,27 @@ namespace CastleGrimtol.Project
       //TODO Figure out why this isn't working
       Console.Clear();
       Item item = CurrentRoom.Items.Find(i => i.Name == option);
+      if (item != null)
+      {
+        Console.WriteLine($"{item.Name} --- {item.Description}");
+        CurrentRoom.Items.Add(item);
+        CurrentPlayer.Inventory.Remove(item);
+        Console.WriteLine($"{item.Description}");
+      }
+      else
+      {
+        Console.WriteLine("That is not an item!");
 
-      // item.Used = true;
-      CurrentRoom.Items.Add(item);
-      CurrentPlayer.Inventory.Remove(item);
-      Console.WriteLine($"{item.Description}");
+      }
 
     }
     public void Lose(string option)
     {
+      if (CurrentRoom.Name == "Poison Chamber" && option == "left")
+      {
+        Console.WriteLine("You stepped back through the purple flames and burned to a crisp!");
+        Playing = false;
+      }
       //TODO decide on losing conditions
     }
 
