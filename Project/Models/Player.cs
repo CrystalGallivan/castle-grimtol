@@ -11,7 +11,6 @@ namespace CastleGrimtol.Project.Models
 
 
 
-
     public Player(string playerName)
     {
       PlayerName = playerName;

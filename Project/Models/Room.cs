@@ -7,55 +7,40 @@ namespace CastleGrimtol.Project.Models
   public class Room : IRoom
   {
     //props
-    public Room Next { get; private set; }
-    public Room Previous { get; private set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public List<Item> Items { get; set; }
     public Dictionary<string, IRoom> Exits { get; set; }
-    // public Dictionary<string, Room> Chamber { get; set; }
 
     //methods
-    public void AddNextRoom(Room next)
+
+    public IRoom Navigate(string option)
     {
-      Next = next;
-      next.AddPreviousRoom(this);
-    }
-    public void AddPreviousRoom(Room previous)
-    {
-      Previous = previous;
-    }
-    private IRoom GoToExit(string direction)
-    {
-      if (Exits.ContainsKey(direction))
+      Console.WriteLine($"{Name} -- {Description}");
+      Console.Clear();
+      if (Exits.ContainsKey(option))
       {
-        return Exits[direction];
+        Console.WriteLine($"{Exits[option].Name} --- {Exits[option].Description}");
+        return Exits[option];
+
       }
-      Console.WriteLine("Wrong Way");
+      Console.WriteLine("Invalid location.");
       return this;
-    }
-    public IRoom Go(string direction)
-    {
-      switch (direction)
-      {
-        case "previous":
-          if (Previous != null) return Previous;
-          return this;
-        case "next":
-          if (Next != null) return Next;
-          return this;
-        default:
-          return GoToExit(direction);
-      }
     }
     public void PrintOption()
     {
-      Console.Write("Type 'forward', 'back', 'left', or 'right' to move.");
-      foreach (var exit in Exits)
-      {
-        Console.Write(exit.Key + " : ");
-      }
+      Console.WriteLine(@"To Move: Type 'go forward', 'go back', 'go left', or 'go right' to move.
+      To see Inventory: Type 'inventory'
+      To Take Item: Type 'take'
+      To Use Item: Type 'use'
+      For Help: Type 'help'
+      To see the room: Type 'look'
+      To Restart: Type 'restart' 
+      To Quit: Type 'quit' ");
+
     }
+
+
 
 
 
@@ -66,7 +51,6 @@ namespace CastleGrimtol.Project.Models
       Description = description;
       Items = new List<Item>();
       Exits = new Dictionary<string, IRoom>();
-      // Chamber = new Dictionary<string, Room>();
     }
   }
 }

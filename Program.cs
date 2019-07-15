@@ -25,12 +25,8 @@ namespace CastleGrimtol
  ____________________________________________________________________________________________________________________
  ");
 
-
-      Console.WriteLine("What is your Name?");
-      var name = Console.ReadLine();
-
-      // GameService gs = new GameService(Room, currentPlayer);
-      // gs.StartGame();
+      GameService gs = new GameService();
+      gs.StartGame();
     }
   }
 }
