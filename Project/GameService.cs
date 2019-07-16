@@ -16,7 +16,7 @@ namespace CastleGrimtol.Project
     {
       Console.WriteLine("What is your Name?");
       string playerName = Console.ReadLine();
-      Player CurrentPlayer = new Player(playerName);
+      CurrentPlayer = new Player(playerName);
       Console.Clear();
       Console.WriteLine($"Welcome {CurrentPlayer.PlayerName}!");
       Console.WriteLine(@"Welcome you are on a mission to retrieve the Sorcer's Stone. Harry Potter is no where to be found. Professor Quirrell must be stopped. You must make you're way through a series of challanges that will push your limits. Navigate your way through the rooms by typing 'go forward', 'go right', 'go left', 'go back'. To open your inventory type 'inventory'. To pick up an item type 'take'. To use an item type 'use'. To look around type 'look'. For help type 'help'. If you're a quitter you can also type 'quit. ");
@@ -41,9 +41,6 @@ namespace CastleGrimtol.Project
       }
       switch (command)
       {
-        case "lose":
-          Lose(option);
-          break;
         case "go":
           Go(option);
           break;
@@ -65,8 +62,15 @@ namespace CastleGrimtol.Project
         case "quit":
           Quit();
           break;
+        case "inventory":
+          Inventory();
+          break;
+        case "clear":
+          Clear();
+          break;
+
       }
-      CurrentRoom.PrintOption();
+
 
     }
 
@@ -74,9 +78,23 @@ namespace CastleGrimtol.Project
     public void Go(string option)
     {
       //TODO  I need to reset currentroom every time the room changes
-      CurrentRoom = (Room)CurrentRoom.Navigate(option);
+      Console.WriteLine($"{CurrentRoom.Name}");
+      if (CurrentRoom.Name == "Poison Chamber" && option == "left")
+      {
+        LoseByFlames();
+      }
+      else if (CurrentRoom.Name == "Keys Chamber" && option == "forward")
+      {
+        Console.WriteLine("The Door is Locked");
+        // LockOut();
+      }
+      else
+      {
 
-      Console.WriteLine("Type 'go forward', 'go back', 'go right', 'go left' to move.");
+        CurrentRoom = (Room)CurrentRoom.Navigate(option);
+
+        Console.WriteLine("Type 'go forward', 'go back', 'go right', 'go left' to move.");
+      }
 
     }
 
@@ -94,17 +112,6 @@ namespace CastleGrimtol.Project
         Console.WriteLine($"{count}) {item.Name} - {item.Description}");
         count++;
       }
-      Console.WriteLine("Would you Like to use and item?");
-      string answer = Console.ReadLine().ToLower();
-      if (answer == "use")
-      {
-        Console.WriteLine("Type item name to select.");
-        string option = Console.ReadLine().ToLower();
-        UseItem(option);
-      }
-      Console.WriteLine("Type 'close' to close your inventory.");
-
-
     }
 
     public void Look()
@@ -149,6 +156,7 @@ namespace CastleGrimtol.Project
       tunnel.Exits.Add("right", keyChamber);
       keyChamber.Exits.Add("left", tunnel);
       keyChamber.Exits.Add("forward", chessChamber);
+      keyChamber.Exits.Add("unlocked", chessChamber);
       chessChamber.Exits.Add("back", keyChamber);
       chessChamber.Exits.Add("forward", trollChamber);
       trollChamber.Exits.Add("back", chessChamber);
@@ -160,12 +168,12 @@ namespace CastleGrimtol.Project
 
 
       // Items
-      Item harp = new Item("Harp", "You pick up the harp and start playing. The dog stop snarling, it's big eyes start to droop. Finally the dogs heads drop. His paw is just far enough off of the trap door take open it and slip through.");
-      Item wand = new Item("Wand", "You find a, 11\" holly, phoenix feather, nice and supple, wand hidden in your robes. You shout incendio. The devil's snare quickly recedes. You can feel your self falling again.");
-      Item broom = new Item("Broom", "What it may lack in speed and flashiness, it makes up with sturdiness and dependability. A good broom that will take care of most of your needs. You grab a hold of it and whisks you up ward towards the keys floating above.");
-      Item falseKey = new Item("Key", "A glittering winged key. You grab the key as it try's to dart away. This key does not fit the key hole on the door");
-      Item key = new Item("Key", "A glittering winged key with a crumpled wing. You easily snatch the key. You take it to the door and try it. It's a perfect match.");
-      Item stone = new Item("The Sorcer's Stone", "A legendary substance with astonishing powers. The Stone will transform any metal into pure gold. It also produces the Elixir of Life, which will make the drinker immortal. You have saved the word from Professor Quirrell and he who must not be named. You have won this round!");
+      Item harp = new Item("harp", "You pick up the harp and start playing. The dog stop snarling, it's big eyes start to droop. Finally the dogs heads drop. His paw is just far enough off of the trap door take open it and slip through.");
+      Item wand = new Item("wand", "You find a, 11\" holly, phoenix feather, nice and supple, wand hidden in your robes. You shout incendio. The devil's snare quickly recedes. You can feel your self falling again.");
+      Item broom = new Item("broom", "What it may lack in speed and flashiness, it makes up with sturdiness and dependability. A good broom that will take care of most of your needs. You grab a hold of it and whisks you up ward towards the keys floating above.");
+      Item falseKey = new Item("key", "A glittering winged key. You grab the key as it try's to dart away. This key does not fit the key hole on the door");
+      Item key = new Item("key", "A glittering winged key with a crumpled wing. You easily snatch the key. You take it to the door and try it. It's a perfect match.");
+      Item stone = new Item("stone", "A legendary substance with astonishing powers. The Stone will transform any metal into pure gold. It also produces the Elixir of Life, which will make the drinker immortal. You have saved the word from Professor Quirrell and he who must not be named. You have won this round!");
 
       //Add Items to Room
       tfcorridor.Items.Add(harp);
@@ -174,9 +182,6 @@ namespace CastleGrimtol.Project
       keyChamber.Items.Add(key);
       meChamber.Items.Add(stone);
 
-
-
-      // CurrentPlayer.Inventory.Add(wand);
 
       CurrentRoom = tfcorridor;
     }
@@ -204,7 +209,11 @@ namespace CastleGrimtol.Project
       //TODO Figure out why this isn't working
       Console.Clear();
       Item item = CurrentRoom.Items.Find(i => i.Name == option);
-      if (item != null)
+      if (item.Name == "stone")
+      {
+        Win();
+      }
+      else if (item != null)
       {
         Console.WriteLine($"{item.Name} --- {item.Description}");
         CurrentRoom.Items.Remove(item);
@@ -217,6 +226,7 @@ namespace CastleGrimtol.Project
 
       }
 
+
     }
 
 
@@ -224,7 +234,7 @@ namespace CastleGrimtol.Project
     {
       //TODO Figure out why this isn't working
       Console.Clear();
-      Item item = CurrentRoom.Items.Find(i => i.Name == option);
+      Item item = CurrentPlayer.Inventory.Find(i => i.Name == option);
       if (item != null)
       {
         Console.WriteLine($"{item.Name} --- {item.Description}");
@@ -239,16 +249,39 @@ namespace CastleGrimtol.Project
       }
 
     }
-    public void Lose(string option)
+    public void LoseByFlames()
     {
-      if (CurrentRoom.Name == "Poison Chamber" && option == "left")
-      {
-        Console.WriteLine("You stepped back through the purple flames and burned to a crisp!");
-        Playing = false;
-      }
+      Console.WriteLine("You stepped back through the purple flames and are burned to a crisp! You Lose!");
+      Playing = false;
+
       //TODO decide on losing conditions
     }
+    public void LockOut()
+    {
+      Item item = CurrentPlayer.Inventory.Find(i => i.Name == "key");
+      if (item.Name != "key")
+      {
+        Console.WriteLine("This door is locked!");
+      }
+      else
+      {
+        Console.WriteLine("Take Key");
+        Go("unlocked");
 
+      }
+
+
+    }
+    public void Win()
+    {
+      Console.WriteLine("You Win!");
+      Playing = false;
+
+    }
+    public void Clear()
+    {
+      Console.Clear();
+    }
     //constructor
     public GameService()
     {

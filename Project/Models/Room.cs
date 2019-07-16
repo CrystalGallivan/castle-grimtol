@@ -27,6 +27,7 @@ namespace CastleGrimtol.Project.Models
       Console.WriteLine("Invalid location.");
       return this;
     }
+
     public void PrintOption()
     {
       Console.WriteLine(@"Options:
